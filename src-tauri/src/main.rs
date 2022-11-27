@@ -68,6 +68,17 @@ async fn get_board(sqlite_pool: State<'_, sqlx::SqlitePool>) -> Result<Board, St
 }
 
 #[tauri::command]
+async fn handle_rename_column(
+  sqlite_pool: State<'_, sqlx::SqlitePool>,
+  column: Column,
+) -> Result<(), String> {
+  database::update_column(&*sqlite_pool, column)
+      .await
+      .map_err(|e| e.to_string())?;
+
+  Ok(())
+}
+#[tauri::command]
 async fn handle_add_card(
   sqlite_pool: State<'_, sqlx::SqlitePool>,
   card: Card,
@@ -134,7 +145,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   // データベースURLを作成する
   let database_dir_str = database_dir.to_str().unwrap().to_string();
   let database_url = format!("sqlite://{}/{}", database_dir_str, DATABASE_FILE);
-  println!("{}", database_url);
   // SQLiteのコネクションプールを作成する
   let sqlite_pool = block_on(database::create_sqlite_pool(&database_url))?;
 
@@ -146,6 +156,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   tauri::Builder::default()
       .invoke_handler(tauri::generate_handler![
           get_board,
+          handle_rename_column,
           handle_add_card,
           handle_move_card,
           handle_remove_card

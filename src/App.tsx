@@ -50,7 +50,10 @@ class CardPos {
   }
 }
 
-// カードの追加直後に呼ばれるハンドラ
+async function handleRenameColumn(board: TBoard, column: TColumn, card: TCard) {
+  await invoke<void>("handle_rename_column", { column: column });
+}
+
 async function handleAddCard(board: TBoard, column: TColumn, card: TCard) {
   const pos = new CardPos(column.id, 0);
   // IPCでCoreプロセスのhandle_add_cardを呼ぶ（引数はJSON形式）
@@ -102,13 +105,14 @@ function App() {
       {board != null && (
         <Board
           initialBoard={board}
+          allowRenameColumn
           allowAddCard={{ on: "top" }}
           allowRemoveCard
-          disableColumnDrag
           onNewCardConfirm={(draftCard: any) => ({
             id: new Date().getTime(),
             ...draftCard,
           })}
+          onColumnRename={handleRenameColumn}
           onCardNew={handleAddCard}
           onCardDragEnd={handleMoveCard}
           onCardRemove={handleRemoveCard}

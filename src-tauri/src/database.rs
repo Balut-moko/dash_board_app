@@ -36,36 +36,55 @@ pub(crate) async fn migrate_database(pool: &SqlitePool) -> DbResult<()> {
 }
 
 pub(crate) async fn get_columns(pool: &SqlitePool) -> DbResult<Vec<Column>> {
-    const SQL1: &str = "SELECT * FROM columns ORDER BY id ASC";
-    let mut rows = sqlx::query(SQL1).fetch(pool);
+  const SQL1: &str = "SELECT * FROM columns ORDER BY id ASC";
+  let mut rows = sqlx::query(SQL1).fetch(pool);
 
-    let mut columns = BTreeMap::new();
-    while let Some(row) = rows.try_next().await? {
-        let id: i64 = row.try_get("id")?;
-        let title: &str = row.try_get("title")?;
-        columns.insert(id, Column::new(id, title));
-    }
+  let mut columns = BTreeMap::new();
+  while let Some(row) = rows.try_next().await? {
+      let id: i64 = row.try_get("id")?;
+      let title: &str = row.try_get("title")?;
+      columns.insert(id, Column::new(id, title));
+  }
 
-    const SQL2: &str = "SELECT cc.column_id, cards.id, cards.title, cards.description \
-        FROM cards, columns_cards AS cc \
-        WHERE \
-            cards.id = cc.card_id \
-        ORDER BY \
-            cc.column_id ASC, \
-            cc.card_position ASC";
+  const SQL2: &str = "SELECT cc.column_id, cards.id, cards.title, cards.description \
+      FROM cards, columns_cards AS cc \
+      WHERE \
+          cards.id = cc.card_id \
+      ORDER BY \
+          cc.column_id ASC, \
+          cc.card_position ASC";
 
-    let mut rows = sqlx::query(SQL2).fetch(pool);
+  let mut rows = sqlx::query(SQL2).fetch(pool);
 
-    while let Some(row) = rows.try_next().await? {
-        let column_id: i64 = row.try_get("column_id")?;
-        let id: i64 = row.try_get("id")?;
-        let title: &str = row.try_get("title")?;
-        let description: Option<String> = row.try_get("description")?;
-        let card = Card::new(id, title, description);
-        columns.get_mut(&column_id).unwrap().add_card(card);
-    }
+  while let Some(row) = rows.try_next().await? {
+      let column_id: i64 = row.try_get("column_id")?;
+      let id: i64 = row.try_get("id")?;
+      let title: &str = row.try_get("title")?;
+      let description: Option<String> = row.try_get("description")?;
+      let card = Card::new(id, title, description);
+      columns.get_mut(&column_id).unwrap().add_card(card);
+  }
 
-    Ok(columns.into_iter().map(|(_k, v)| v).collect())
+  Ok(columns.into_iter().map(|(_k, v)| v).collect())
+}
+
+pub(crate) async fn update_column(pool: &SqlitePool, column: Column) -> DbResult<()> {
+  let mut tx = pool.begin().await?;
+
+  const UPDATE: &str = "UPDATE columns \
+        SET title = ? \
+        WHERE id = ?";
+
+  sqlx::query(UPDATE)
+  .bind(column.title)
+  .bind(column.id)
+  .execute(&mut *tx)
+  .await?;
+
+  // トランザクションをコミットする
+  tx.commit().await?;
+
+  Ok(())
 }
 
 /// posで指定した位置にカードを挿入する
