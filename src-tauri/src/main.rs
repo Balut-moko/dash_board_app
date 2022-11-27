@@ -111,7 +111,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
   use tauri::async_runtime::block_on;
 
   // データベースのファイルパス等を設定する
-  const DATABASE_DIR: &str = "gihyo-kanban-db";
+  const DATABASE_DIR: &str = "dashboard-db";
   const DATABASE_FILE: &str = "db.sqlite";
   // ユーザのホームディレクトリ直下にデータベースのディレクトリを作成する
   // もし、各OSで標準的に使用されるアプリ専用のデータディレクトリに保存したいなら
