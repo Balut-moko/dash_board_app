@@ -12,8 +12,55 @@
 }
 
 .react-kanban-board {
+  max-width: 100%;
   padding: 5px;
 }
+.react-kanban-column {
+  padding: 15px;
+  border-radius: 2px;
+  background-color: #eee;
+  margin: 5px;
+}
+.react-kanban-column input:focus {
+  outline: none;
+}
+.react-kanban-column-header {
+  margin-top: 5px;
+  padding-bottom: 10px;
+  font-weight: bold;
+}
+.react-kanban-column-header input {
+  width: 8em;
+  font-weight: bold;
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+.react-kanban-column-header__button {
+  background-color: #eee;
+  border: none;
+  border-radius: 3px;
+}
+.react-kanban-column-header__button:hover {
+  background-color: #ccc;
+}
+,
+.react-kanban-column-header__button:focus {
+  transition: 0.3s;
+  cursor: pointer;
+  background-color: #ccc;
+}
+,
+.react-kanban-column-header__button:active,
+.react-kanban-column-adder-button {
+  border: 2px dashed #eee;
+  height: 132px;
+  margin: 5px;
+}
+.react-kanban-column-adder-button:hover {
+  cursor: pointer;
+}
+,
 .react-kanban-card {
   border-radius: 3px;
   background-color: #fff;
@@ -39,15 +86,6 @@
   font-weight: bold;
   display: flex;
   justify-content: space-between;
-}
-.react-kanban-column {
-  padding: 15px;
-  border-radius: 2px;
-  background-color: #eee;
-  margin: 5px;
-}
-.react-kanban-column input:focus {
-  outline: none;
 }
 .react-kanban-card-adder-form {
   border-radius: 3px;
@@ -107,40 +145,4 @@
   transition: 0.3s;
   cursor: pointer;
   background-color: #ccc;
-}
-.react-kanban-column-header {
-  margin-top: 5px;
-  padding-bottom: 10px;
-  font-weight: bold;
-}
-.react-kanban-column-header input {
-  width: 8em;
-  font-weight: bold;
-  border: none;
-  font-family: inherit;
-  font-size: inherit;
-}
-.react-kanban-column-header__button {
-  background-color: #eee;
-  border: none;
-  border-radius: 3px;
-}
-.react-kanban-column-header__button:hover {
-  background-color: #ccc;
-}
-,
-.react-kanban-column-header__button:focus {
-  transition: 0.3s;
-  cursor: pointer;
-  background-color: #ccc;
-}
-,
-.react-kanban-column-header__button:active,
-.react-kanban-column-adder-button {
-  border: 2px dashed #eee;
-  height: 132px;
-  margin: 5px;
-}
-.react-kanban-column-adder-button:hover {
-  cursor: pointer;
 }
