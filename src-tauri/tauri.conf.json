@@ -55,10 +55,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
         "resizable": true,
         "title": "dash_board_app",
-        "width": 800
+        "width": 1280,
+        "height": 960,
+        "maxWidth": 1280,
+        "maxHeight": 960
       }
     ]
   }
